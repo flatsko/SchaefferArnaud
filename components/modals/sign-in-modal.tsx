@@ -1,4 +1,3 @@
-import { signIn } from "next-auth/react";
 import {
   Dispatch,
   SetStateAction,
@@ -6,11 +5,12 @@ import {
   useMemo,
   useState,
 } from "react";
+import { signIn } from "next-auth/react";
 
-import { Icons } from "@/components/shared/icons";
+import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { siteConfig } from "@/config/site";
+import { Icons } from "@/components/shared/icons";
 
 function SignInModal({
   showSignInModal,
@@ -28,10 +28,9 @@ function SignInModal({
           <a href={siteConfig.url}>
             <Icons.logo className="size-10" />
           </a>
-          <h3 className="font-urban text-2xl font-bold">Sign In</h3>
+          <h3 className="font-urban text-2xl font-bold">Connecte-toi</h3>
           <p className="text-sm text-gray-500">
-            This is strictly for demo purposes - only your email and profile
-            picture will be stored.
+            Uniquement ton email et ton image de profil seront sauvgardés.
           </p>
         </div>
 
@@ -53,7 +52,7 @@ function SignInModal({
             ) : (
               <Icons.google className="mr-2 size-4" />
             )}{" "}
-            Sign In with Google
+            Se connecter avec Google
           </Button>
         </div>
       </div>

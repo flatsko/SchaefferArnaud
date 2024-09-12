@@ -35,103 +35,119 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
   const PricingCard = ({ offer }: { offer: SubscriptionPlan }) => {
     return (
       <div
-        className={cn(
-          "relative flex flex-col overflow-hidden rounded-3xl border shadow-sm",
-          offer.title.toLocaleLowerCase() === "pro"
-            ? "-m-0.5 border-2 border-purple-400"
-            : "",
-        )}
-        key={offer.title}
+        className={
+          offer.isStar
+            ? "h-auto w-auto rounded-3xl bg-gradient-to-r from-accent to-secondary p-1 transition-transform hover:scale-105 hover:transform hover:shadow-lg"
+            : ""
+        }
       >
-        <div className="min-h-[150px] items-start space-y-4 bg-muted/50 p-6">
-          <p>{offer.title}</p>
-          <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            {offer.title}
-          </p>
-
-          <div className="flex flex-row">
-            <div className="flex items-end">
-              <div className="flex text-left text-3xl font-semibold leading-6">
-                {isYearly && offer.prices.monthly > 0 ? (
-                  <>
-                    <span className="mr-2 text-muted-foreground/80 line-through">
-                      ${offer.prices.monthly}
-                    </span>
-                    <span>${offer.prices.yearly / 12}</span>
-                  </>
-                ) : (
-                  `$${offer.prices.monthly}`
-                )}
-              </div>
-              <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
-                <div>/month</div>
+        <div
+          className={
+            offer.isStar
+              ? cn(
+                  "relative m-1 flex flex-col overflow-hidden rounded-3xl bg-card shadow-sm",
+                  offer.title.toLocaleLowerCase() === "pro"
+                    ? "-m-0.5 border-2 border-purple-400"
+                    : "",
+                )
+              : cn(
+                  "relative flex flex-col overflow-hidden rounded-3xl border shadow-sm",
+                  offer.title.toLocaleLowerCase() === "pro"
+                    ? "-m-0.5 border-2 border-purple-400"
+                    : "",
+                )
+          }
+          key={offer.title}
+        >
+          <div className="min-h-[180px] flex-row items-start space-y-4 bg-muted/50 p-6">
+            <p className="flex flex-row items-start justify-start">
+              {" "}
+              {offer.title}
+            </p>
+            <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
+              {offer.description}
+            </p>
+            <div className="flex flex-row">
+              <div className="flex items-end">
+                <div className="flex text-left text-3xl font-semibold leading-6">
+                  {isYearly && offer.prices.monthly > 0 ? (
+                    <>
+                      <span className="mr-2 text-muted-foreground/80 line-through decoration-red-600">
+                        {offer.prices.monthly}€
+                      </span>
+                      <span>{Math.round(offer.prices.yearly / 12)}€</span>
+                    </>
+                  ) : (
+                    `${offer.prices.monthly}€`
+                  )}
+                </div>
+                <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
+                  <div>/mois</div>
+                </div>
               </div>
             </div>
+            {offer.prices.monthly > 0 ? (
+              <div className="text-left text-sm text-muted-foreground">
+                {isYearly
+                  ? `${offer.prices.yearly}€ Prélevés anuellement`
+                  : "Prélevés mensuellement"}
+              </div>
+            ) : null}
           </div>
-          {offer.prices.monthly > 0 ? (
-            <div className="text-left text-sm text-muted-foreground">
-              {isYearly
-                ? `$${offer.prices.yearly} will be charged when annual`
-                : "when charged monthly"}
-            </div>
-          ) : null}
-        </div>
-
-        <div className="flex h-full flex-col justify-between gap-16 p-6">
-          <ul className="space-y-2 text-left text-sm font-medium leading-normal">
-            {offer.benefits.map((feature) => (
-              <li className="flex items-start gap-x-3" key={feature}>
-                <Icons.check className="size-5 shrink-0 text-purple-500" />
-                <p>{feature}</p>
-              </li>
-            ))}
-
-            {offer.limitations.length > 0 &&
-              offer.limitations.map((feature) => (
-                <li
-                  className="flex items-start text-muted-foreground"
-                  key={feature}
-                >
-                  <Icons.close className="mr-3 size-5 shrink-0" />
+          <div className="flex h-full flex-col justify-between gap-16 p-6">
+            <ul className="space-y-2 text-left text-sm font-medium leading-normal">
+              {offer.benefits.map((feature) => (
+                <li className="flex items-start gap-x-3" key={feature}>
+                  <Icons.check className="size-5 shrink-0 text-purple-500" />
                   <p>{feature}</p>
                 </li>
               ))}
-          </ul>
-
-          {userId && subscriptionPlan ? (
-            offer.title === "Starter" ? (
-              <Link
-                href="/dashboard"
-                className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                    rounded: "full",
-                  }),
-                  "w-full",
-                )}
-              >
-                Go to dashboard
-              </Link>
+              {offer.limitations.length > 0 &&
+                offer.limitations.map((feature) => (
+                  <li
+                    className="flex items-start text-muted-foreground"
+                    key={feature}
+                  >
+                    <Icons.close className="mr-3 size-5 shrink-0" />
+                    <p>{feature}</p>
+                  </li>
+                ))}
+            </ul>
+            {userId && subscriptionPlan ? (
+              offer.title === "Starter" ? (
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    buttonVariants({
+                      variant: "outline",
+                      rounded: "full",
+                    }),
+                    "w-full",
+                  )}
+                >
+                  Go to dashboard
+                </Link>
+              ) : (
+                <BillingFormButton
+                  year={isYearly}
+                  offer={offer}
+                  subscriptionPlan={subscriptionPlan}
+                />
+              )
             ) : (
-              <BillingFormButton
-                year={isYearly}
-                offer={offer}
-                subscriptionPlan={subscriptionPlan}
-              />
-            )
-          ) : (
-            <Button
-              variant={
-                offer.title.toLocaleLowerCase() === "pro"
-                  ? "default"
-                  : "outline"
-              }
-              rounded="full"
-              onClick={() => setShowSignInModal(true)}
-            >
-              Sign in
-            </Button>
-          )}
+              <Button
+                variant={
+                  offer.title.toLocaleLowerCase() === "pro"
+                    ? "default"
+                    : "outline"
+                }
+                rounded="full"
+                onClick={() => setShowSignInModal(true)}
+              >
+                Souscrire
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -140,7 +156,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
   return (
     <MaxWidthWrapper>
       <section className="flex flex-col items-center text-center">
-        <HeaderSection label="Pricing" title="Start at full speed !" />
+        <HeaderSection label="Prix" title="Demandez le meilleur" />
 
         <div className="mb-4 mt-10 flex items-center gap-5">
           <ToggleGroup
@@ -156,14 +172,14 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
               className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
               aria-label="Toggle yearly billing"
             >
-              Yearly (-20%)
+              Annuel (-20%)
             </ToggleGroupItem>
             <ToggleGroupItem
               value="monthly"
               className="rounded-full px-5 data-[state=on]:!bg-primary data-[state=on]:!text-primary-foreground"
               aria-label="Toggle monthly billing"
             >
-              Monthly
+              Mensuel
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -175,18 +191,15 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
         </div>
 
         <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-          Email{" "}
+          Email {""}
           <a
             className="font-medium text-primary hover:underline"
-            href="mailto:support@saas-starter.com"
+            href="mailto:arnaud@arnaud-schaeffer.com"
           >
-            support@saas-starter.com
+            arnaud@arnaud-schaeffer.com
           </a>{" "}
-          for to contact our support team.
+          pour toutes vos questions.
           <br />
-          <strong>
-            You can test the subscriptions and won&apos;t be charged.
-          </strong>
         </p>
       </section>
     </MaxWidthWrapper>

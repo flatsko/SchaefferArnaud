@@ -18,7 +18,7 @@ export function UpgradeCard() {
       </CardHeader>
       <CardContent className="md:max-xl:px-4">
         <Button size="sm" className="w-full">
-          Upgrade
+          Mise à niveau
         </Button>
       </CardContent>
     </Card>

@@ -1,7 +1,8 @@
-import Link from "next/link";
 import * as React from "react";
+import Link from "next/link";
 
-import { CustomerPortalButton } from "@/components/forms/customer-portal-button";
+import { UserSubscriptionPlan } from "types";
+import { cn, formatDate } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn, formatDate } from "@/lib/utils";
-import { UserSubscriptionPlan } from "types";
+import { CustomerPortalButton } from "@/components/forms/customer-portal-button";
 
 interface BillingInfoProps extends React.HTMLAttributes<HTMLFormElement> {
   userSubscriptionPlan: UserSubscriptionPlan;
@@ -31,9 +31,9 @@ export function BillingInfo({ userSubscriptionPlan }: BillingInfoProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscription Plan</CardTitle>
+        <CardTitle>Plan souscris</CardTitle>
         <CardDescription>
-          You are currently on the <strong>{title}</strong> plan.
+          Tu es actuellement sur le <strong>{title}</strong> plan.
         </CardDescription>
       </CardHeader>
       <CardContent>{description}</CardContent>
@@ -41,8 +41,8 @@ export function BillingInfo({ userSubscriptionPlan }: BillingInfoProps) {
         {isPaid ? (
           <p className="text-sm font-medium text-muted-foreground">
             {isCanceled
-              ? "Your plan will be canceled on "
-              : "Your plan renews on "}
+              ? "Ton abonnement sera annulé le "
+              : "Ton plan se renouvellera le "}
             {formatDate(stripeCurrentPeriodEnd)}.
           </p>
         ) : null}
@@ -51,7 +51,7 @@ export function BillingInfo({ userSubscriptionPlan }: BillingInfoProps) {
           <CustomerPortalButton userStripeId={stripeCustomerId} />
         ) : (
           <Link href="/pricing" className={cn(buttonVariants())}>
-            Choose a plan
+            Choisi un plan
           </Link>
         )}
       </CardFooter>

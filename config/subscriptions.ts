@@ -52,6 +52,30 @@ export const pricingData: SubscriptionPlan[] = [
     },
   },
   {
+    title: "Offre de lancement",
+    description: "La meilleure valeur",
+    benefits: [
+      "Hébergement inclus",
+      "Hébergement inclus",
+      "Hébergement inclus",
+    ],
+    limitations: [
+      "Hébergement inclus.",
+      "Hébergement inclus",
+      "Hébergement inclus",
+      "Hébergement inclus.",
+    ],
+    isStar: true,
+    prices: {
+      monthly: 22,
+      yearly: 12,
+    },
+    stripeIds: {
+      monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
+      yearly: env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID,
+    },
+  },
+  {
     title: "Pay As You Go",
     description: "Boost Visibilité",
     benefits: [
@@ -75,24 +99,18 @@ export const pricingData: SubscriptionPlan[] = [
     },
   },
   {
-    title: "Maintenance SEO ",
+    title: "Hébergement ",
     icon: Icons.check,
 
-    description: "Boost Visibilité",
-    benefits: [
-      "Hébergement inclus",
-      "Hébergement inclus",
-      "Hébergement inclus",
-    ],
+    description: "Base Solide ",
+    benefits: ["Bande passante", "Adresses e-mail", "Sauvegarde quotidienne"],
     limitations: [
-      "Hébergement inclus.",
-      "Hébergement inclus",
-      "Hébergement inclus",
-      "Hébergement inclus.",
+      "Aucune maintenance incluse",
+      "Nécessite des compétences techniques",
     ],
     prices: {
-      monthly: 22,
-      yearly: 12,
+      monthly: 12,
+      yearly: 120,
     },
     stripeIds: {
       monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,
@@ -100,8 +118,8 @@ export const pricingData: SubscriptionPlan[] = [
     },
   },
   {
-    title: "Boost Visibilité",
-    description: "Base Solide",
+    title: "SEO",
+    description: "Boost Visibilité",
     benefits: [
       "Hébergement inclus",
       "Hébergement inclus",

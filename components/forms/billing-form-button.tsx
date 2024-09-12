@@ -44,7 +44,7 @@ export function BillingFormButton({
           <Icons.spinner className="mr-2 size-4 animate-spin" /> Loading...
         </>
       ) : (
-        <>{userOffer ? "Manage Subscription" : "Upgrade"}</>
+        <>{userOffer ? "Manage Subscription" : "Mise à niveau"}</>
       )}
     </Button>
   );

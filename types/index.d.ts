@@ -51,6 +51,7 @@ export type SubscriptionPlan = {
   benefits: string[];
   limitations: string[];
   icon?: keyof typeof Icons;
+  isStar?: boolean;
   prices: {
     monthly: number;
     yearly: number;
