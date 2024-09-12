@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import type { Icon } from "lucide-react";
+import { object } from "zod";
 
 import { Icons } from "@/components/shared/icons";
 
@@ -49,6 +50,7 @@ export type SubscriptionPlan = {
   description: string;
   benefits: string[];
   limitations: string[];
+  icon?: keyof typeof Icons;
   prices: {
     monthly: number;
     yearly: number;
