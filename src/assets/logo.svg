@@ -1,0 +1,22 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0" y1="0" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" /> <!-- blue-500 -->
+      <stop offset="100%" stop-color="#8B5CF6" /> <!-- purple-500 -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Text part -->
+  <text x="10" y="35" font-family="'Inter', sans-serif" font-weight="700" font-size="28" fill="url(#logoGradient)">
+    Arnaud
+  </text>
+  
+  <!-- Last name with different style -->
+  <text x="105" y="35" font-family="'Inter', sans-serif" font-weight="400" font-size="28" fill="#1F2937">
+    Schaeffer
+  </text>
+  
+  <!-- Code bracket accent -->
+  <path d="M190 15L195 25L190 35" stroke="url(#logoGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
