@@ -30,15 +30,25 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Gestion des erreurs de connexion
+    if (error.code === 'ERR_NETWORK' || error.message.includes('ERR_CONNECTION_REFUSED')) {
+      toast.error('❌ Impossible de se connecter au serveur. Veuillez vérifier que le backend est démarré sur le port 5000.');
+      return Promise.reject(error);
+    }
+    
     if (error.response?.status === 401) {
       Cookies.remove('token');
-      window.location.href = '/login';
+      toast.info('🔐 Session expirée, redirection vers la page de connexion...');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+      return Promise.reject(error);
     }
     
     // Afficher les erreurs avec toast
     const message = error.response?.data?.message || 'Une erreur est survenue';
     if (error.response?.status !== 401) {
-      toast.error(message);
+      toast.error(`❌ ${message}`);
     }
     
     return Promise.reject(error);

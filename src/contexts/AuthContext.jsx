@@ -121,7 +121,16 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Erreur d\'inscription';
+      let errorMessage = 'Erreur d\'inscription';
+      
+      if (error.response?.data?.details) {
+        // Erreurs de validation détaillées
+        const validationErrors = error.response.data.details;
+        errorMessage = validationErrors.map(err => err.message).join(', ');
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      
       dispatch({
         type: 'LOGIN_FAILURE',
         payload: errorMessage

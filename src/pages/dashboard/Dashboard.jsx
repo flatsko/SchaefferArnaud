@@ -15,6 +15,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { userAPI, subscriptionAPI, orderAPI, referralAPI, ticketAPI } from '../../services/api';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import DashboardLayout from '../../components/DashboardLayout';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -74,7 +75,13 @@ const Dashboard = () => {
   }, [user]);
 
   if (loading) {
-    return <LoadingSpinner text="Chargement de votre tableau de bord..." />;
+    return (
+      <DashboardLayout title="Tableau de bord">
+        <div className="flex items-center justify-center h-64">
+          <LoadingSpinner text="Chargement de votre tableau de bord..." />
+        </div>
+      </DashboardLayout>
+    );
   }
 
   const quickStats = [
@@ -128,21 +135,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* En-tête de bienvenue */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl font-bold text-gray-900">
-            Bonjour, {user?.firstName} ! 👋
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Voici un aperçu de votre activité et de vos services.
-          </p>
-        </motion.div>
+    <DashboardLayout 
+      title={`Bonjour, ${user?.firstName} ! 👋`}
+      subtitle="Voici un aperçu de votre activité et de vos services."
+    >
 
         {/* Statistiques rapides */}
         <motion.div
@@ -342,8 +338,7 @@ const Dashboard = () => {
             </div>
           </motion.div>
         </div>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

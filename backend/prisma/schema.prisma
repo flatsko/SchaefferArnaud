@@ -20,6 +20,7 @@ model User {
   avatar    String?
   isActive  Boolean  @default(true)
   role      Role     @default(USER)
+  lastLoginAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -177,6 +178,18 @@ model TicketMessage {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("ticket_messages")
+}
+
+model NewsletterSubscription {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  isActive       Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("newsletter_subscriptions")
 }
 
 // Enums

@@ -61,12 +61,37 @@ async function main() {
         password: hashedPassword,
         firstName: 'Pierre',
         lastName: 'Durand',
-        role: 'USER',
-        referredBy: user1.id
+        role: 'USER'
       }
     });
 
     console.log('✅ Utilisateurs créés:', { admin: admin.email, user1: user1.email, user2: user2.email, user3: user3.email });
+
+    // Créer les relations de parrainage
+    console.log('🔗 Création des relations de parrainage...');
+    const referralCode1 = await generateReferralCode();
+    const referralCode2 = await generateReferralCode();
+    
+    const referral1 = await prisma.referral.create({
+      data: {
+        referrerId: user1.id,
+        referredId: user3.id,
+        code: referralCode1,
+        status: 'COMPLETED',
+        commission: 5.0
+      }
+    });
+
+    const referral2 = await prisma.referral.create({
+      data: {
+        referrerId: user2.id,
+        code: referralCode2,
+        status: 'PENDING',
+        commission: 0
+      }
+    });
+
+    console.log('✅ Relations de parrainage créées:', { referral1: referral1.code, referral2: referral2.code });
 
     // Créer les plans d'abonnement
     console.log('📋 Création des plans d\'abonnement...');
@@ -75,7 +100,7 @@ async function main() {
         name: 'Plan Basique',
         description: 'Accès aux fonctionnalités de base',
         price: 9.99,
-        duration: 'MONTHLY',
+        interval: 'monthly',
         features: [
           'Support par email',
           'Accès aux ressources de base',
@@ -90,7 +115,7 @@ async function main() {
         name: 'Plan Pro',
         description: 'Toutes les fonctionnalités avancées',
         price: 29.99,
-        duration: 'MONTHLY',
+        interval: 'monthly',
         features: [
           'Support prioritaire',
           'Accès à toutes les ressources',
@@ -107,7 +132,7 @@ async function main() {
         name: 'Plan Lifetime',
         description: 'Accès à vie à toutes les fonctionnalités',
         price: 299.99,
-        duration: 'LIFETIME',
+        interval: 'yearly',
         features: [
           'Accès à vie',
           'Support prioritaire à vie',
@@ -128,9 +153,10 @@ async function main() {
         userId: user1.id,
         planId: proPlan.id,
         status: 'ACTIVE',
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
+        amount: proPlan.price,
+        currency: 'EUR'
       }
     });
 
@@ -139,9 +165,10 @@ async function main() {
         userId: user2.id,
         planId: basicPlan.id,
         status: 'ACTIVE',
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        amount: basicPlan.price,
+        currency: 'EUR'
       }
     });
 
@@ -155,9 +182,6 @@ async function main() {
         description: 'Formation complète sur React avec hooks, context et patterns avancés',
         price: 199.99,
         category: 'Formation',
-        images: [
-          'https://example.com/react-formation.jpg'
-        ],
         isActive: true
       }
     });
@@ -168,9 +192,6 @@ async function main() {
         description: 'Consultation personnalisée d\'une heure sur votre projet',
         price: 150.00,
         category: 'Consultation',
-        images: [
-          'https://example.com/consultation.jpg'
-        ],
         isActive: true
       }
     });
@@ -181,9 +202,6 @@ async function main() {
         description: 'Template complet pour site e-commerce avec React et Node.js',
         price: 99.99,
         category: 'Template',
-        images: [
-          'https://example.com/ecommerce-template.jpg'
-        ],
         isActive: true
       }
     });
@@ -196,24 +214,18 @@ async function main() {
       data: {
         userId: user1.id,
         totalAmount: 199.99,
-        status: 'CONFIRMED',
-        shippingAddress: {
-          street: '123 Rue de la Paix',
-          city: 'Paris',
-          postalCode: '75001',
-          country: 'France'
-        },
-        paidAt: new Date(),
-        items: {
-          create: [
-            {
-              productId: product1.id,
-              quantity: 1,
-              price: 199.99,
-              total: 199.99
-            }
-          ]
-        }
+        status: 'PAID',
+        currency: 'EUR'
+      }
+    });
+
+    // Créer les items de commande séparément
+    const orderItem1 = await prisma.orderItem.create({
+      data: {
+        orderId: order1.id,
+        productId: product1.id,
+        quantity: 1,
+        price: 199.99
       }
     });
 
@@ -222,60 +234,30 @@ async function main() {
         userId: user2.id,
         totalAmount: 249.99,
         status: 'SHIPPED',
-        shippingAddress: {
-          street: '456 Avenue des Champs',
-          city: 'Lyon',
-          postalCode: '69001',
-          country: 'France'
-        },
-        paidAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Il y a 2 jours
-        items: {
-          create: [
-            {
-              productId: product2.id,
-              quantity: 1,
-              price: 150.00,
-              total: 150.00
-            },
-            {
-              productId: product3.id,
-              quantity: 1,
-              price: 99.99,
-              total: 99.99
-            }
-          ]
-        }
+        currency: 'EUR'
+      }
+    });
+
+    // Créer les items de la deuxième commande
+    const orderItem2 = await prisma.orderItem.create({
+      data: {
+        orderId: order2.id,
+        productId: product2.id,
+        quantity: 1,
+        price: 150.00
+      }
+    });
+
+    const orderItem3 = await prisma.orderItem.create({
+      data: {
+        orderId: order2.id,
+        productId: product3.id,
+        quantity: 1,
+        price: 99.99
       }
     });
 
     console.log('✅ Commandes créées');
-
-    // Créer des codes de parrainage
-    console.log('🎯 Création des codes de parrainage...');
-    const referralCode1 = await generateReferralCode();
-    const referral1 = await prisma.referral.create({
-      data: {
-        referrerId: user1.id,
-        code: referralCode1,
-        commissionRate: 0.1,
-        status: 'PENDING'
-      }
-    });
-
-    const referralCode2 = await generateReferralCode();
-    const referral2 = await prisma.referral.create({
-      data: {
-        referrerId: user1.id,
-        referredUserId: user3.id,
-        code: referralCode2,
-        commissionRate: 0.1,
-        status: 'COMPLETED',
-        completedAt: new Date(),
-        commissionAmount: 10.00
-      }
-    });
-
-    console.log('✅ Codes de parrainage créés:', { code1: referralCode1, code2: referralCode2 });
 
     // Créer des tickets de support
     console.log('🎫 Création des tickets de support...');
@@ -286,13 +268,12 @@ async function main() {
         description: 'Je n\'arrive pas à accéder au module 3 de la formation React avancée.',
         status: 'OPEN',
         priority: 'MEDIUM',
-        category: 'Technique',
         messages: {
           create: [
             {
               userId: user1.id,
-              content: 'Je n\'arrive pas à accéder au module 3 de la formation React avancée. Pouvez-vous m\'aider ?',
-              isFromAdmin: false
+              message: 'Je n\'arrive pas à accéder au module 3 de la formation React avancée. Pouvez-vous m\'aider ?',
+              isAdmin: false
             }
           ]
         }
@@ -306,19 +287,17 @@ async function main() {
         description: 'J\'aimerais changer mon plan d\'abonnement.',
         status: 'IN_PROGRESS',
         priority: 'LOW',
-        category: 'Facturation',
-        assignedToId: admin.id,
         messages: {
           create: [
             {
               userId: user2.id,
-              content: 'J\'aimerais passer du plan basique au plan pro. Comment faire ?',
-              isFromAdmin: false
+              message: 'J\'aimerais passer du plan basique au plan pro. Comment faire ?',
+              isAdmin: false
             },
             {
               userId: admin.id,
-              content: 'Bonjour Marie, je vais vous aider avec le changement de plan. Vous pouvez le faire directement depuis votre espace membre.',
-              isFromAdmin: true
+              message: 'Bonjour Marie, je vais vous aider avec le changement de plan. Vous pouvez le faire directement depuis votre espace membre.',
+              isAdmin: true
             }
           ]
         }
@@ -332,19 +311,17 @@ async function main() {
         description: 'Excellent travail sur les formations, très utiles !',
         status: 'CLOSED',
         priority: 'LOW',
-        category: 'Feedback',
-        closedAt: new Date(),
         messages: {
           create: [
             {
               userId: user3.id,
-              content: 'Excellent travail sur les formations, très utiles ! Merci beaucoup.',
-              isFromAdmin: false
+              message: 'Excellent travail sur les formations, très utiles ! Merci beaucoup.',
+              isAdmin: false
             },
             {
               userId: admin.id,
-              content: 'Merci beaucoup Pierre pour ce retour positif ! N\'hésitez pas si vous avez des questions.',
-              isFromAdmin: true
+              message: 'Merci beaucoup Pierre pour ce retour positif ! N\'hésitez pas si vous avez des questions.',
+              isAdmin: true
             }
           ]
         }

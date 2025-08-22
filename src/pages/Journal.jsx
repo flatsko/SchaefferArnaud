@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowRight, Tag, User } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Tag, User, Mail, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const Journal = () => {
   const [selectedCategory, setSelectedCategory] = useState('Tous');
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
 
   const categories = ['Tous', 'Développement Web', 'SEO', 'Tendances', 'Conseils'];
 
@@ -71,6 +74,34 @@ const Journal = () => {
 
   const featuredArticle = articles.find(article => article.featured);
   const regularArticles = articles.filter(article => !article.featured);
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setEmail('');
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription à la newsletter:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pt-16 bg-[var(--background)]">
@@ -240,16 +271,54 @@ const Journal = () => {
             <p className="text-xl text-white/90 mb-8">
               Recevez mes derniers articles et conseils directement dans votre boîte mail.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder="Votre adresse email"
-                className="flex-1 px-4 py-3 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <button className="bg-white text-[var(--primary)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300">
-                S'abonner
-              </button>
-            </div>
+            {submitStatus === 'success' ? (
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 max-w-md mx-auto">
+                <div className="flex items-center justify-center gap-3 text-white">
+                  <CheckCircle size={24} />
+                  <span className="text-lg font-semibold">Merci pour votre inscription !</span>
+                </div>
+                <p className="text-white/90 text-center mt-2">
+                  Vous recevrez bientôt un email de confirmation.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleNewsletterSubmit} className="max-w-md mx-auto">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                    <input 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Votre adresse email"
+                      required
+                      disabled={isSubmitting}
+                      className="w-full pl-10 pr-4 py-3 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50"
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting || !email}
+                    className="bg-white text-[var(--primary)] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-[var(--primary)] border-t-transparent"></div>
+                        Inscription...
+                      </>
+                    ) : (
+                      'S\'abonner'
+                    )}
+                  </button>
+                </div>
+                {submitStatus === 'error' && (
+                  <div className="flex items-center gap-2 text-red-200 mt-3 justify-center">
+                    <AlertCircle size={16} />
+                    <span className="text-sm">Une erreur est survenue. Veuillez réessayer.</span>
+                  </div>
+                )}
+              </form>
+            )}
           </motion.div>
         </div>
       </section>

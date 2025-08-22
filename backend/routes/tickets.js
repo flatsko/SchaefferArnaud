@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { ticketSchema, ticketMessageSchema, ticketStatusSchema } from '../utils/validation.js';
+import { ticketValidation } from '../utils/validation.js';
 import { sendTicketNotificationEmail } from '../utils/email.js';
 
 const router = express.Router();
@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 // @desc    Créer un nouveau ticket
 // @route   POST /api/tickets
 // @access  Private
-router.post('/', authenticate, validate(ticketSchema), asyncHandler(async (req, res) => {
+router.post('/', authenticate, validate(ticketValidation.create), asyncHandler(async (req, res) => {
   const { subject, description, priority = 'MEDIUM', category } = req.body;
 
   const ticket = await prisma.ticket.create({
@@ -149,7 +149,7 @@ router.get('/:id', authenticate, asyncHandler(async (req, res) => {
 // @desc    Ajouter un message à un ticket
 // @route   POST /api/tickets/:id/messages
 // @access  Private
-router.post('/:id/messages', authenticate, validate(ticketMessageSchema), asyncHandler(async (req, res) => {
+router.post('/:id/messages', authenticate, validate(ticketValidation.addMessage), asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { content, attachments } = req.body;
 
@@ -234,7 +234,7 @@ router.post('/:id/messages', authenticate, validate(ticketMessageSchema), asyncH
 // @desc    Mettre à jour le statut d'un ticket
 // @route   PATCH /api/tickets/:id/status
 // @access  Private
-router.patch('/:id/status', authenticate, validate(ticketStatusSchema), asyncHandler(async (req, res) => {
+router.patch('/:id/status', authenticate, validate(ticketValidation.updateStatus), asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 

@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { orderSchema } from '../utils/validation.js';
+import { orderValidation } from '../utils/validation.js';
 import { sendOrderConfirmationEmail } from '../utils/email.js';
 import Stripe from 'stripe';
 
@@ -177,7 +177,7 @@ router.delete('/products/:id', authenticate, authorize(['ADMIN']), asyncHandler(
 // @desc    Créer une nouvelle commande
 // @route   POST /api/orders
 // @access  Private
-router.post('/', authenticate, validate(orderSchema), asyncHandler(async (req, res) => {
+router.post('/', authenticate, validate(orderValidation.create), asyncHandler(async (req, res) => {
   const { items, shippingAddress, paymentMethodId } = req.body;
 
   if (!items || items.length === 0) {

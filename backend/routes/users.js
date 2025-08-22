@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { userProfileSchema } from '../utils/validation.js';
+import { userValidation } from '../utils/validation.js';
 import { generateReferralCode } from '../utils/jwt.js';
 
 const router = express.Router();
@@ -123,7 +123,7 @@ router.get('/:id', authenticate, asyncHandler(async (req, res) => {
 // @desc    Mettre à jour le profil utilisateur
 // @route   PUT /api/users/:id
 // @access  Private (propriétaire ou admin)
-router.put('/:id', authenticate, validate(userProfileSchema), asyncHandler(async (req, res) => {
+router.put('/:id', authenticate, validate(userValidation.updateProfile), asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { firstName, lastName, email, currentPassword, newPassword } = req.body;
   

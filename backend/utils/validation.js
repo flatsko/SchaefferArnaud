@@ -121,6 +121,23 @@ export const orderValidation = {
   })
 };
 
+// Schémas de validation pour la newsletter
+export const newsletterValidation = {
+  subscribe: Joi.object({
+    email: Joi.string().email().required().messages({
+      'string.email': 'Adresse email invalide',
+      'any.required': 'Adresse email requise'
+    })
+  }),
+
+  unsubscribe: Joi.object({
+    email: Joi.string().email().required().messages({
+      'string.email': 'Adresse email invalide',
+      'any.required': 'Adresse email requise'
+    })
+  })
+};
+
 // Middleware de validation
 export const validate = (schema) => {
   return (req, res, next) => {

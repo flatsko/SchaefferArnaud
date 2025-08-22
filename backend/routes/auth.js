@@ -6,7 +6,7 @@ import { authenticate } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { createSession, deleteSession, generateResetToken } from '../utils/jwt.js';
 import { sendWelcomeEmail, sendPasswordResetEmail } from '../utils/email.js';
-import { registerSchema, loginSchema, resetPasswordSchema } from '../utils/validation.js';
+import { authValidation } from '../utils/validation.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 // @desc    Inscription d'un nouvel utilisateur
 // @route   POST /api/auth/register
 // @access  Public
-router.post('/register', validate(registerSchema), asyncHandler(async (req, res) => {
+router.post('/register', validate(authValidation.register), asyncHandler(async (req, res) => {
   const { email, password, firstName, lastName, referralCode } = req.body;
 
   // Vérifier si l'utilisateur existe déjà
@@ -107,7 +107,7 @@ router.post('/register', validate(registerSchema), asyncHandler(async (req, res)
 // @desc    Connexion utilisateur
 // @route   POST /api/auth/login
 // @access  Public
-router.post('/login', validate(loginSchema), asyncHandler(async (req, res) => {
+router.post('/login', validate(authValidation.login), asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   // Trouver l'utilisateur
@@ -252,7 +252,7 @@ router.post('/forgot-password', asyncHandler(async (req, res) => {
 // @desc    Réinitialisation de mot de passe
 // @route   POST /api/auth/reset-password
 // @access  Public
-router.post('/reset-password', validate(resetPasswordSchema), asyncHandler(async (req, res) => {
+router.post('/reset-password', validate(authValidation.resetPassword), asyncHandler(async (req, res) => {
   const { token, password } = req.body;
 
   // Trouver l'utilisateur avec le token valide

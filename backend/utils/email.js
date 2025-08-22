@@ -1,11 +1,12 @@
 import nodemailer from 'nodemailer';
+import axios from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 // Configuration du transporteur email
 const createTransporter = () => {
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: parseInt(process.env.EMAIL_PORT),
     secure: false, // true for 465, false for other ports
@@ -150,4 +151,107 @@ export const sendReferralSuccessEmail = async (referrer, referred, commission) =
   `;
   
   return sendEmail(referrer.email, subject, html);
+};
+
+// Configuration Brevo
+const BREVO_API_URL = 'https://api.brevo.com/v3';
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+
+// Fonction pour ajouter un contact à Brevo
+export const subscribeToNewsletter = async (email) => {
+  if (!BREVO_API_KEY) {
+    console.warn('⚠️ BREVO_API_KEY non configurée, inscription newsletter ignorée');
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${BREVO_API_URL}/contacts`,
+      {
+        email,
+        listIds: [parseInt(process.env.BREVO_NEWSLETTER_LIST_ID || '1')],
+        attributes: {
+          FIRSTNAME: '',
+          LASTNAME: '',
+          SOURCE: 'Website Newsletter'
+        },
+        updateEnabled: true
+      },
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': BREVO_API_KEY
+        }
+      }
+    );
+
+    console.log(`📧 Contact ajouté à Brevo: ${email}`);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 400 && error.response?.data?.code === 'duplicate_parameter') {
+      console.log(`📧 Contact déjà existant dans Brevo: ${email}`);
+      return;
+    }
+    console.error('❌ Erreur Brevo:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Fonction pour supprimer un contact de Brevo
+export const unsubscribeFromNewsletter = async (email) => {
+  if (!BREVO_API_KEY) {
+    console.warn('⚠️ BREVO_API_KEY non configurée, désabonnement newsletter ignoré');
+    return;
+  }
+
+  try {
+    await axios.delete(
+      `${BREVO_API_URL}/contacts/${encodeURIComponent(email)}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+          'api-key': BREVO_API_KEY
+        }
+      }
+    );
+
+    console.log(`📧 Contact supprimé de Brevo: ${email}`);
+  } catch (error) {
+    if (error.response?.status === 404) {
+      console.log(`📧 Contact non trouvé dans Brevo: ${email}`);
+      return;
+    }
+    console.error('❌ Erreur Brevo:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Fonction pour envoyer un email de bienvenue newsletter
+export const sendNewsletterWelcomeEmail = async (email) => {
+  const subject = 'Bienvenue dans notre newsletter ! 📰';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #8B5CF6;">Bienvenue dans notre newsletter ! 📰</h1>
+      <p>Merci de vous être abonné(e) à notre newsletter !</p>
+      <p>Vous recevrez désormais nos derniers articles sur :</p>
+      <div style="background-color: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <ul>
+          <li>🚀 Les tendances du développement web</li>
+          <li>🔍 Les techniques de SEO et référencement</li>
+          <li>💡 Conseils et astuces pour entrepreneurs</li>
+          <li>📈 Stratégies digitales efficaces</li>
+        </ul>
+      </div>
+      <p>Restez connecté pour ne rien manquer de nos contenus exclusifs !</p>
+      <p>Cordialement,<br>Arnaud Schaeffer</p>
+      <hr style="margin: 30px 0; border: none; border-top: 1px solid #E5E7EB;">
+      <p style="font-size: 12px; color: #6B7280;">
+        Vous recevez cet email car vous vous êtes abonné(e) à notre newsletter.<br>
+        <a href="${process.env.FRONTEND_URL}/unsubscribe?email=${encodeURIComponent(email)}" style="color: #8B5CF6;">Se désabonner</a>
+      </p>
+    </div>
+  `;
+  
+  return sendEmail(email, subject, html);
 };

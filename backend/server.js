@@ -13,6 +13,7 @@ import orderRoutes from './routes/orders.js';
 import referralRoutes from './routes/referrals.js';
 import ticketRoutes from './routes/tickets.js';
 import webhookRoutes from './routes/webhooks.js';
+import newsletterRoutes from './routes/newsletter.js';
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
@@ -26,7 +27,7 @@ const prisma = new PrismaClient();
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet());
@@ -63,6 +64,28 @@ app.use((req, res, next) => {
   next();
 });
 
+// API root endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'API Schaeffer Arnaud - Backend',
+    version: '1.0.0',
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      subscriptions: '/api/subscriptions',
+      orders: '/api/orders',
+      referrals: '/api/referrals',
+      tickets: '/api/tickets',
+      webhooks: '/api/webhooks',
+      newsletter: '/api/newsletter',
+      health: '/api/health'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -80,6 +103,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // Error handling middleware
 app.use(notFound);
