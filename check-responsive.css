@@ -1,0 +1,25 @@
+/* Test responsive breakpoints */
+@media (min-width: 768px) {
+  .test-md {
+    background-color: #10b981 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .test-mobile {
+    background-color: #ef4444 !important;
+  }
+}
+
+/* Debug classes */
+.debug-header {
+  border: 1px solid red;
+}
+
+.debug-nav {
+  border: 1px solid blue;
+}
+
+.debug-auth {
+  border: 1px solid green;
+}

@@ -1,91 +1,21 @@
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Server, Shield, Clock, Zap, CheckCircle, ArrowRight, Monitor, Database, Settings, Wrench, Globe, X } from 'lucide-react';
+import { CheckCircle, ArrowRight, X, Server, Settings, Shield, Wrench, Zap, Monitor } from 'lucide-react';
 import { useState } from 'react';
+import { services, plans, comparisonData } from '../../data/hebergementMaintenanceData';
+
+// Mapping des noms d'icônes vers les composants
+const iconComponents = {
+  Server,
+  Settings,
+  Shield,
+  Wrench,
+  Zap,
+  Monitor
+};
 
 const HebergementMaintenance = () => {
   const [isAnnual, setIsAnnual] = useState(false);
-  const services = [
-    {
-      icon: <Server className="h-8 w-8" />,
-      title: "Hébergement Web Professionnel",
-      description: "Solutions d'hébergement fiables et performantes pour tous vos projets web.",
-      features: ["Serveurs haute performance", "Disponibilité 99.9%", "Support technique expert", "Migration gratuite"]
-    },
-    {
-      icon: <Settings className="h-8 w-8" />,
-      title: "Maintenance WordPress",
-      description: "Maintenance complète de votre site WordPress pour une sécurité et performance optimales.",
-      features: ["Mises à jour automatiques", "Sauvegardes quotidiennes", "Optimisation vitesse", "Monitoring sécurité"]
-    },
-    {
-      icon: <Shield className="h-8 w-8" />,
-      title: "Sécurité & Monitoring",
-      description: "Protection avancée et surveillance continue de votre site web.",
-      features: ["Firewall WAF", "Détection malware", "Certificats SSL", "Rapports mensuels"]
-    }
-  ];
-
-  const plans = [
-    {
-      name: "Pack Sérénité 😌",
-      monthlyPrice: "19€",
-      annualPrice: "192€",
-      monthlyOriginalPrice: "25€",
-      annualOriginalPrice: "300€",
-      description: "La base solide pour votre présence en ligne",
-      features: [
-        "Hébergement",
-        "Mises à jour de base",
-        "Sauvegarde mensuelle",
-        "100 comptes email"
-      ],
-      notIncluded: [
-        "Modifications du site",
-        "Support technique complet"
-      ],
-      popular: false,
-      monthlyStripeLink: "https://buy.stripe.com/pack-serenite-monthly",
-      annualStripeLink: "https://buy.stripe.com/pack-serenite-annual"
-    },
-    {
-      name: "Pack Tranquillité 😌",
-      monthlyPrice: "25€",
-      annualPrice: "252€",
-      monthlyOriginalPrice: "32€",
-      annualOriginalPrice: "384€",
-      description: "Des opérations sans faille pour votre site",
-      features: [
-        "Tout le pack Sérénité",
-        "Sauvegarde hebdomadaire",
-        "Support technique",
-        "Guide Avancé Des Bonnes Pratiques SEO (50€)",
-        "20% de réduction sur la prochaine prestation"
-      ],
-      popular: true,
-      monthlyStripeLink: "https://buy.stripe.com/pack-tranquillite-monthly",
-      annualStripeLink: "https://buy.stripe.com/pack-tranquillite-annual"
-    },
-    {
-      name: "Pack Zen 😌",
-      monthlyPrice: "35€",
-      annualPrice: "348€",
-      monthlyOriginalPrice: "45€",
-      annualOriginalPrice: "540€",
-      description: "L'offre ultime pour votre présence en ligne",
-      features: [
-        "Tout le pack Tranquillité",
-        "Rapport trimestriel SEO",
-        "Sauvegarde journalière",
-        "Support technique Premium",
-        "Plugin PressGEO Pro - le top pour votre référencement (84€/an)",
-        "Optimisation des performances du site (70€)",
-        "Réduction d'un article pour votre Blog (100€)"
-      ],
-      popular: false,
-      monthlyStripeLink: "https://buy.stripe.com/pack-zen-monthly",
-      annualStripeLink: "https://buy.stripe.com/pack-zen-annual"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text)]">
@@ -119,12 +49,18 @@ const HebergementMaintenance = () => {
             </h1>
             
             <p className="text-xl text-[var(--text-secondary)] max-w-4xl mx-auto mb-12 leading-relaxed">
-              Vous souhaitez un site web qui fonctionne sans souci pour vous concentrer sur votre métier ? Nos solutions de maintenance s'occupent de tout.
+              Vous souhaitez un site web qui fonctionne sans souci pour vous concentrer sur votre métier ? Mes solutions de maintenance s'occupent de tout.
             </p>
             
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                const pricingSection = document.getElementById('pricing-section');
+                if (pricingSection) {
+                  pricingSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               className="bg-[var(--primary)] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[var(--primary)]/90 transition-colors inline-flex items-center gap-2 mb-12"
             >
               Choisir mon pack
@@ -166,7 +102,7 @@ const HebergementMaintenance = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Nos Services de Maintenance
+              Mes Services de Maintenance
             </h2>
             <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
               Une maintenance complète pour un site WordPress performant et sécurisé
@@ -184,7 +120,7 @@ const HebergementMaintenance = () => {
                 className="bg-[var(--background)] p-8 rounded-xl border border-[var(--text-secondary)]/20 hover:border-[var(--primary)]/50 transition-colors"
               >
                 <div className="text-[var(--primary)] mb-4">
-                  {service.icon}
+                  {React.createElement(iconComponents[service.iconName], { className: "h-8 w-8" })}
                 </div>
                 <h3 className="text-xl font-semibold mb-4">{service.title}</h3>
                 <p className="text-[var(--text-secondary)] mb-6">{service.description}</p>
@@ -203,7 +139,7 @@ const HebergementMaintenance = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="pricing-section" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -359,242 +295,77 @@ const HebergementMaintenance = () => {
 
             {/* Table Rows */}
             <div className="divide-y divide-[var(--text-secondary)]/20">
-              {/* Hébergement */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Hébergement</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-              </div>
-
-              {/* Migration vers mes serveurs */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Migration vers mes serveurs</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-              </div>
-
-              {/* Mises à jour */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Mises à jour</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
-                </div>
-              </div>
-
-              {/* Sauvegarde */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Sauvegarde</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">Mensuelle</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">Hebdomadaire</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">Quotidienne</div>
-              </div>
-
-              {/* Modifications du site */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Modifications du site</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <X className="h-5 w-5 text-red-500 mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>Uniquement Bugs/Modifications mineures (30min par mois)</span>
+              {comparisonData.map((item, index) => (
+                <div key={index} className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
+                  <div className="p-4 font-medium">{item.feature}</div>
+                  
+                  {/* Pack Sérénité */}
+                  <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
+                    {item.serenite.included ? (
+                      item.serenite.details ? (
+                        <span>{item.serenite.details}</span>
+                      ) : (
+                        <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
+                      )
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        <X className="h-4 w-4 text-red-500" />
+                        <span>Non inclus</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Pack Tranquillité */}
+                  <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
+                    {item.tranquillite.included ? (
+                      item.tranquillite.details ? (
+                        item.tranquillite.details.includes('🎁') ? (
+                          <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
+                            {item.tranquillite.details}
+                          </span>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1">
+                            <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
+                            <span>{item.tranquillite.details}</span>
+                          </div>
+                        )
+                      ) : (
+                        <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
+                      )
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        <X className="h-4 w-4 text-red-500" />
+                        <span>Non inclus</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Pack Zen */}
+                  <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
+                    {item.zen.included ? (
+                      item.zen.details ? (
+                        item.zen.details.includes('🎁') ? (
+                          <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
+                            {item.zen.details}
+                          </span>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1">
+                            <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
+                            <span>{item.zen.details}</span>
+                          </div>
+                        )
+                      ) : (
+                        <CheckCircle className="h-5 w-5 text-[var(--primary)] mx-auto" />
+                      )
+                    ) : (
+                      <div className="flex items-center justify-center gap-1">
+                        <X className="h-4 w-4 text-red-500" />
+                        <span>Non inclus</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>Bugs/Modifications/Ajout de contenu (30min par mois)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Comptes email */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Comptes email</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    📧 100 comptes de 1go
-                  </span>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>100 comptes de 1go</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>100 comptes de 1go</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Support technique */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Support technique</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <X className="h-5 w-5 text-red-500 mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>Réponse en moins de 5h</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>Réponse en moins de 1h</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Rapport SEO */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Rapport SEO</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <X className="h-5 w-5 text-red-500 mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20">
-                  <X className="h-5 w-5 text-red-500 mx-auto" />
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-[var(--primary)]" />
-                    <span>Trimestriel</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Guide des bonnes pratiques SEO */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Guide des bonnes pratiques SEO</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 50€)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert (valeur : 50€)
-                  </span>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert (valeur : 50€)
-                  </span>
-                </div>
-              </div>
-
-              {/* Code de 20% de remise */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Code de 20% de remise sur la prochaine prestation</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert (valeur : 50€)
-                  </span>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert
-                  </span>
-                </div>
-              </div>
-
-              {/* Optimisation des performances */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Optimisation des performances du site</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 100€)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 100€)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert : (valeur : 100€)
-                  </span>
-                </div>
-              </div>
-
-              {/* Plugin PressSEO */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Plugin PressSEO</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 60€/an)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 60€/an)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert (valeur : 60€/an)
-                  </span>
-                </div>
-              </div>
-
-              {/* Rédaction experte */}
-              <div className="grid grid-cols-4 hover:bg-[var(--bg-secondary)]/50 transition-colors">
-                <div className="p-4 font-medium">Rédaction experte : 1 article ciblé qui vous positionne sur Google</div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 100€)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <div className="flex items-center justify-center gap-1">
-                    <X className="h-4 w-4 text-red-500" />
-                    <span>Non inclus (valeur : 100€)</span>
-                  </div>
-                </div>
-                <div className="p-4 text-center border-l border-[var(--text-secondary)]/20 text-sm">
-                  <span className="inline-flex items-center gap-1 text-[var(--primary)] font-medium">
-                    🎁 Offert : (valeur : 100€)
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
 
             {/* Action Buttons */}
@@ -646,7 +417,7 @@ const HebergementMaintenance = () => {
               viewport={{ once: true }}
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Pourquoi Choisir Notre Maintenance ?
+                Pourquoi Choisir Ma Maintenance ?
               </h2>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -656,7 +427,7 @@ const HebergementMaintenance = () => {
                   <div>
                     <h3 className="font-semibold mb-2">Expertise WordPress</h3>
                     <p className="text-[var(--text-secondary)]">
-                      Notre équipe d'experts WordPress assure la maintenance complète de votre site.
+                      Mon expertise WordPress assure la maintenance complète de votre site.
                     </p>
                   </div>
                 </div>
@@ -697,7 +468,7 @@ const HebergementMaintenance = () => {
                 <div className="text-center">
                   <h3 className="text-xl font-semibold mb-4">Tableau de Bord Intuitif</h3>
                   <p className="text-[var(--text-secondary)]">
-                    Gérez facilement votre hébergement avec notre interface moderne et intuitive.
+                    Gérez facilement votre hébergement avec mon interface moderne et intuitive.
                   </p>
                 </div>
               </div>

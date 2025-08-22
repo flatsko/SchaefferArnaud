@@ -1,28 +1,42 @@
-import { Link } from 'react-router-dom';
-import { Github, Linkedin, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
+import { Github, Linkedin, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
+import Icon from "./ui/Icon";
+import { Logo } from "./ui";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { name: 'GitHub', icon: Github, href: 'https://github.com/arnaudschaeffer' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/in/arnaudschaeffer' },
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/arnaudschaeffer' },
+    {
+      name: "GitHub",
+      icon: Github,
+      href: "https://github.com/arnaudschaeffer",
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      href: "https://linkedin.com/in/arnaudschaeffer",
+    },
+    {
+      name: "Twitter",
+      icon: Twitter,
+      href: "https://twitter.com/arnaudschaeffer",
+    },
   ];
 
   const quickLinks = [
-    { name: 'Accueil', href: '/' },
-    { name: 'À propos', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'Portfolio', href: '/portfolio' },
+    { name: "Accueil", href: "/" },
+    { name: "À propos", href: "/about" },
+    { name: "Services", href: "/services" },
+    { name: "Portfolio", href: "/portfolio" },
   ];
 
   const services = [
-    { name: 'Hébergement/Maintenance', href: '/services#hosting' },
-    { name: 'Création de sites', href: '/services#web-development' },
-    { name: 'SEO', href: '/services#seo' },
-    { name: 'SEA', href: '/services#sea' },
+    { name: "Hébergement/Maintenance", href: "/services#hosting" },
+    { name: "Création de sites", href: "/services#web-development" },
+    { name: "SEO", href: "/services#seo" },
+    { name: "SEA", href: "/services#sea" },
   ];
 
   return (
@@ -37,13 +51,11 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-lg flex items-center justify-center">
-                <span className="text-[var(--background)] font-bold text-lg">AS</span>
-              </div>
-              <span className="font-bold text-xl">Arnaud Schaeffer</span>
+              <Logo />
             </div>
             <p className="text-[var(--text-secondary)] mb-6">
-              Développeur web spécialisé dans la création de sites internet, l'hébergement sécurisé et les stratégies SEO/SEA.
+              Développeur web spécialisé dans la création de sites internet,
+              l'hébergement sécurisé et les stratégies SEO/SEA.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => {
@@ -121,25 +133,25 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail size={18} className="text-[var(--primary)]" />
                 <a
-                  href="mailto:contact@arnaud-schaeffer.com"
+                  href="mailto:arnaud@arnaud-schaeffer.com"
                   className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors duration-300"
                 >
-                  contact@arnaud-schaeffer.com
+                  arnaud@arnaud-schaeffer.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone size={18} className="text-[var(--primary)]" />
                 <a
-                  href="tel:+33123456789"
+                  href="tel:+33636061097"
                   className="text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors duration-300"
                 >
-                  +33 1 23 45 67 89
+                  06 36 06 10 97
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin size={18} className="text-[var(--primary)]" />
                 <span className="text-[var(--text-secondary)]">
-                  Paris, France
+                  La Rochelle, France
                 </span>
               </div>
             </div>

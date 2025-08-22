@@ -1,415 +1,341 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Check, ArrowRight, Code, Smartphone, Cloud, Zap, Users, Shield } from 'lucide-react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  Code,
+  Server,
+  Search,
+  ArrowRight,
+  CheckCircle,
+  Star,
+  Zap,
+  Shield,
+  Award,
+  Users,
+  TrendingUp,
+  Globe,
+} from "lucide-react";
 
-// Remplacez par votre clé publique Stripe
-const stripePromise = loadStripe('pk_test_your_stripe_public_key_here');
+const services = [
+  {
+    title: "Développement Web",
+    description:
+      "Création de sites et applications web sur-mesure avec des technologies modernes.",
+    longDescription:
+      "Solutions web innovantes qui transforment votre présence digitale et propulsent votre entreprise vers de nouveaux sommets.",
+    link: "/services/developpement-web",
+    icon: Code,
+    features: [
+      "React & Next.js",
+      "Design responsive",
+      "Performance optimisée",
+      "SEO intégré",
+    ],
+    price: "À partir de 2 500€",
+    gradient: "from-violet-500 to-purple-600",
+    bgGradient: "from-violet-500/10 to-purple-600/10",
+  },
+  {
+    title: "Hébergement & Maintenance",
+    description:
+      "Solutions fiables pour héberger et maintenir vos projets en toute sécurité.",
+    longDescription:
+      "Infrastructure cloud sécurisée avec monitoring 24/7 et support technique dédié pour garantir la disponibilité de vos services.",
+    link: "/services/hebergement-maintenance",
+    icon: Server,
+    features: [
+      "Cloud AWS/Azure",
+      "Monitoring 24/7",
+      "Sauvegardes automatiques",
+      "Support technique",
+    ],
+    price: "À partir de 99€/mois",
+    gradient: "from-blue-500 to-cyan-600",
+    bgGradient: "from-blue-500/10 to-cyan-600/10",
+  },
+  {
+    title: "SEO & Référencement",
+    description:
+      "Améliorez votre visibilité sur les moteurs de recherche et attirez plus de clients.",
+    longDescription:
+      "Stratégies SEO avancées pour dominer les résultats de recherche et maximiser votre visibilité en ligne.",
+    link: "/services/seo-referencement",
+    icon: Search,
+    features: [
+      "Audit SEO complet",
+      "Optimisation technique",
+      "Content marketing",
+      "Suivi des performances",
+    ],
+    price: "À partir de 299€/mois",
+    gradient: "from-emerald-500 to-teal-600",
+    bgGradient: "from-emerald-500/10 to-teal-600/10",
+  },
+];
 
-const CheckoutForm = ({ service, onSuccess }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+const premiumFeatures = [
+  {
+    icon: Shield,
+    title: "Sécurité Renforcée",
+    description:
+      "Protection maximale contre les cybermenaces avec les dernières technologies de sécurité.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Performance Optimale",
+    description:
+      "Chargement ultra-rapide et expérience utilisateur fluide sur tous les appareils.",
+  },
+  {
+    icon: Award,
+    title: "Qualité Premium",
+    description:
+      "Standards de développement les plus élevés avec code propre et maintenable.",
+  },
+  {
+    icon: Users,
+    title: "Support Dédié",
+    description:
+      "Accompagnement personnalisé et support technique réactif 7j/7.",
+  },
+];
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    const cardElement = elements.getElement(CardElement);
-
-    try {
-      // Ici vous devriez appeler votre backend pour créer un PaymentIntent
-      // Pour la démo, on simule un paiement réussi
-      setTimeout(() => {
-        setIsLoading(false);
-        onSuccess();
-      }, 2000);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-    }
-  };
+const ServiceCard = ({ service, index }) => {
+  const Icon = service.icon;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="p-4 border border-gray-200 rounded-lg">
-        <CardElement
-          options={{
-            style: {
-              base: {
-                fontSize: '16px',
-                color: '#424770',
-                '::placeholder': {
-                  color: '#aab7c4',
-                },
-              },
-            },
-          }}
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      className="relative group"
+    >
+      <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl hover:shadow-violet-500/20 border border-violet-500/20 transition-all duration-500 group-hover:scale-105 h-full">
+        {/* Background gradient effect */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
         />
+
+        <div className="relative p-8 h-full flex flex-col">
+          {/* Icon */}
+          <div
+            className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r ${service.gradient} mb-6 group-hover:scale-110 transition-transform duration-300`}
+          >
+            <Icon className="text-white" size={32} />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1">
+            <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-violet-200 transition-colors">
+              {service.title}
+            </h3>
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              {service.longDescription}
+            </p>
+
+            {/* Features */}
+            <div className="space-y-2 mb-6">
+              {service.features.map((feature, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <CheckCircle
+                    className="text-violet-400 flex-shrink-0"
+                    size={16}
+                  />
+                  <span className="text-gray-300 text-sm">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Price */}
+            <div className="mb-6">
+              <span
+                className={`text-lg font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}
+              >
+                {service.price}
+              </span>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <Link
+            to={service.link}
+            className={`inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r ${service.gradient} text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all duration-300 group-hover:scale-105`}
+          >
+            Découvrir
+            <ArrowRight
+              className="group-hover:translate-x-1 transition-transform"
+              size={18}
+            />
+          </Link>
+        </div>
       </div>
-      
-      {error && (
-        <div className="text-red-600 text-sm">{error}</div>
-      )}
-      
-      <button
-        type="submit"
-        disabled={!stripe || isLoading}
-        className="btn btn-primary w-full"
-      >
-        {isLoading ? 'Traitement...' : `Payer ${service.price}€`}
-      </button>
-    </form>
+    </motion.div>
   );
 };
 
-const PaymentModal = ({ service, isOpen, onClose, onSuccess }) => {
-  if (!isOpen) return null;
+const FeatureCard = ({ feature, index }) => {
+  const Icon = feature.icon;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-[var(--background)] rounded-lg p-6 max-w-md w-full"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-[var(--text)]">Paiement sécurisé</h3>
-          <button
-            onClick={onClose}
-            className="text-[var(--text-secondary)] hover:text-[var(--text)]"
-          >
-            ✕
-          </button>
-        </div>
-        
-        <div className="mb-6">
-          <h4 className="font-semibold text-[var(--text)]">{service.title}</h4>
-          <p className="text-[var(--text-secondary)]">{service.description}</p>
-          <p className="text-2xl font-bold text-[var(--primary)] mt-2">{service.price}€</p>
-        </div>
-        
-        <Elements stripe={stripePromise}>
-          <CheckoutForm service={service} onSuccess={onSuccess} />
-        </Elements>
-      </motion.div>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="text-center group"
+    >
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-500/20 to-purple-600/20 backdrop-blur-sm border border-violet-500/30 mb-4 group-hover:scale-110 transition-transform duration-300">
+        <Icon className="text-violet-400" size={32} />
+      </div>
+      <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+      <p className="text-gray-300 leading-relaxed">{feature.description}</p>
+    </motion.div>
   );
 };
 
 const Services = () => {
-  const [selectedService, setSelectedService] = useState(null);
-  const [showPayment, setShowPayment] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-
-  const services = [
-    {
-      id: 1,
-      icon: Code,
-      title: 'Développement Web',
-      description: 'Application web moderne et responsive',
-      price: 2500,
-      duration: '4-6 semaines',
-      features: [
-        'Design responsive',
-        'Interface utilisateur moderne',
-        'Optimisation SEO',
-        'Intégration API',
-        'Tests automatisés',
-        'Déploiement inclus'
-      ],
-      popular: false
-    },
-    {
-      id: 2,
-      icon: Smartphone,
-      title: 'Application Mobile',
-      description: 'App native iOS/Android ou cross-platform',
-      price: 4500,
-      duration: '8-12 semaines',
-      features: [
-        'Design natif',
-        'Performance optimisée',
-        'Notifications push',
-        'Intégration backend',
-        'Tests sur devices',
-        'Publication stores'
-      ],
-      popular: true
-    },
-    {
-      id: 3,
-      icon: Cloud,
-      title: 'Solution Cloud',
-      description: 'Architecture cloud scalable et sécurisée',
-      price: 3500,
-      duration: '6-8 semaines',
-      features: [
-        'Architecture AWS/GCP',
-        'Auto-scaling',
-        'Monitoring avancé',
-        'Sécurité renforcée',
-        'Backup automatique',
-        'Support 24/7'
-      ],
-      popular: false
-    }
-  ];
-
-  const additionalServices = [
-    {
-      icon: Zap,
-      title: 'Audit de Performance',
-      description: 'Analyse complète et optimisation de votre application existante',
-      price: 800
-    },
-    {
-      icon: Users,
-      title: 'Formation Équipe',
-      description: 'Formation de vos équipes aux technologies modernes',
-      price: 1200
-    },
-    {
-      icon: Shield,
-      title: 'Audit Sécurité',
-      description: 'Évaluation et renforcement de la sécurité de vos applications',
-      price: 1000
-    }
-  ];
-
-  const handlePayment = (service) => {
-    setSelectedService(service);
-    setShowPayment(true);
-  };
-
-  const handlePaymentSuccess = () => {
-    setShowPayment(false);
-    setPaymentSuccess(true);
-    setTimeout(() => setPaymentSuccess(false), 5000);
-  };
-
   return (
-    <div className="min-h-screen pt-16">
-      {/* Hero Section */}
-      <section className="py-20 bg-[var(--bg-secondary)]">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl md:text-6xl font-bold text-[var(--text)] mb-6">
-              Mes
-              <span className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent"> Services</span>
-            </h1>
-            <p className="text-xl text-[var(--text-secondary)] mb-8 max-w-3xl mx-auto">
-              Des solutions sur mesure pour transformer vos idées en réalité digitale. 
-              Paiement sécurisé et transparent.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-violet-900/20 text-white pt-24 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-violet-500/10 to-purple-600/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-blue-500/10 to-violet-500/10 rounded-full blur-2xl" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-purple-500/5 to-violet-500/5 rounded-full blur-xl" />
 
-      {/* Main Services */}
-      <section className="py-20 bg-[var(--background)]">
-        <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Hero Section */}
+        <motion.section
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20 md:mb-32"
+        >
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-none"
+          >
+            <span className="bg-gradient-to-r from-violet-300 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+              Mes Services
+            </span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-light mb-8"
+          >
+            Solutions digitales premium pour propulser votre entreprise vers
+            l'excellence. De la conception au déploiement, je transforme vos
+            idées en succès digital.
+          </motion.p>
+
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="flex flex-wrap justify-center gap-4 text-sm text-gray-400"
+          >
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500/10 to-purple-600/10 backdrop-blur-sm border border-violet-500/20 rounded-full">
+              <Star className="text-violet-400" size={16} />
+              <span>Excellence garantie</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-cyan-600/10 backdrop-blur-sm border border-blue-500/20 rounded-full">
+              <Zap className="text-blue-400" size={16} />
+              <span>Livraison rapide</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500/10 to-teal-600/10 backdrop-blur-sm border border-emerald-500/20 rounded-full">
+              <Globe className="text-emerald-400" size={16} />
+              <span>Support 24/7</span>
+            </div>
+          </motion.div>
+        </motion.section>
+
+        {/* Services Grid */}
+        <section className="mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-[var(--text)] mb-6">
-              Services Principaux
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+              Expertise Premium
             </h2>
-            <p className="text-xl text-[var(--text-secondary)] max-w-3xl mx-auto">
-              Choisissez le service qui correspond à vos besoins. Paiement sécurisé par Stripe.
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              Découvrez mes domaines d'expertise et comment je peux transformer
+              votre vision en réalité digitale.
             </p>
           </motion.div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <motion.div
-                  key={service.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className={`relative card ${service.popular ? 'ring-2 ring-blue-600' : ''}`}
-                >
-                  {service.popular && (
-                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                        Populaire
-                      </span>
-                    </div>
-                  )}
-                  
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Icon className="text-white" size={32} />
-                </div>
-                <h3 className="text-2xl font-bold text-[var(--text)] mb-2">{service.title}</h3>
-                <p className="text-[var(--text-secondary)] mb-4">{service.description}</p>
-                <div className="text-4xl font-bold text-[var(--primary)] mb-2">
-                  {service.price}€
-                </div>
-                <p className="text-[var(--text-secondary)]">{service.duration}</p>
-                  </div>
-                  
-                  <ul className="space-y-3 mb-8">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center">
-                        <Check className="text-green-500 mr-3 flex-shrink-0" size={20} />
-                        <span className="text-[var(--text-secondary)]">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <button
-                    onClick={() => handlePayment(service)}
-                    className={`btn w-full ${
-                      service.popular ? 'btn-primary' : 'btn-secondary'
-                    }`}
-                  >
-                    Commencer le projet
-                    <ArrowRight className="ml-2" size={20} />
-                  </button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Additional Services */}
-      <section className="py-20 bg-[var(--bg-secondary)]">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-[var(--text)] mb-6">
-              Solutions Complètes
-            </h2>
-            <p className="text-xl text-[var(--text-secondary)] max-w-3xl mx-auto">
-              Des services additionnels pour optimiser et sécuriser vos projets existants.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {additionalServices.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="card text-center"
-                >
-                  <div className="w-16 h-16 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <Icon className="text-white" size={32} />
-                  </div>
-                  <h3 className="text-xl font-bold text-[var(--text)] mb-3">{service.title}</h3>
-                  <p className="text-[var(--text-secondary)] mb-4">{service.description}</p>
-                  <div className="text-2xl font-bold text-[var(--primary)] mb-4">
-                    {service.price}€
-                  </div>
-                  <button
-                    onClick={() => handlePayment(service)}
-                    className="btn btn-secondary w-full"
-                  >
-                    Commander
-                  </button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-20 bg-[var(--background)]">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-[var(--text)] mb-6">
-              Mon Processus
-            </h2>
-            <p className="text-xl text-[var(--text-secondary)] max-w-3xl mx-auto">
-              Une méthodologie éprouvée pour garantir le succès de votre projet.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: '01', title: 'Analyse', description: 'Étude approfondie de vos besoins et objectifs' },
-              { step: '02', title: 'Conception', description: 'Design et architecture de la solution' },
-              { step: '03', title: 'Développement', description: 'Implémentation avec feedback régulier' },
-              { step: '04', title: 'Livraison', description: 'Tests, déploiement et formation' }
-            ].map((process, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="w-16 h-16 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-lg">{process.step}</span>
-                </div>
-                <h3 className="text-xl font-bold text-[var(--text)] mb-3">{process.title}</h3>
-                <p className="text-[var(--text-secondary)]">{process.description}</p>
-              </motion.div>
+            {services.map((service, index) => (
+              <ServiceCard key={index} service={service} index={index} />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Payment Modal */}
-      <PaymentModal
-        service={selectedService}
-        isOpen={showPayment}
-        onClose={() => setShowPayment(false)}
-        onSuccess={handlePaymentSuccess}
-      />
+        {/* Premium Features */}
+        <section className="mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+              Pourquoi Me Choisir
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              Une approche premium qui fait la différence dans chaque projet.
+            </p>
+          </motion.div>
 
-      {/* Success Message */}
-      {paymentSuccess && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50"
-        >
-          <div className="flex items-center">
-            <Check className="mr-2" size={20} />
-            Paiement réussi ! Je vous contacterai sous 24h.
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {premiumFeatures.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} index={index} />
+            ))}
           </div>
-        </motion.div>
-      )}
+        </section>
+
+        {/* CTA Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
+        >
+          <div className="relative bg-gradient-to-br from-gray-800/50 to-violet-900/20 backdrop-blur-sm rounded-3xl p-12 border border-violet-500/20 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 to-purple-600/5" />
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white to-purple-300 bg-clip-text text-transparent">
+                Prêt à Transformer Votre Vision ?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Discutons de votre projet et découvrons ensemble comment créer
+                une solution digitale qui dépasse vos attentes.
+              </p>
+              <Link to="/contact" target="_blank">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-violet-500/25 transition-all duration-300 text-lg"
+                >
+                  Démarrer Mon Projet
+                  <ArrowRight
+                    className="group-hover:translate-x-1 transition-transform"
+                    size={20}
+                  />
+                </motion.button>
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+      </div>
     </div>
   );
 };
